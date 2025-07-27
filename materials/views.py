@@ -3,7 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson
 from materials.serializers import CourseSerializer, LessonSerializer
-from users.permissions import IsModerator
+from users.permissions import IsModerator, IsOwner
 
 
 class CourseViewSet(ModelViewSet):
@@ -15,11 +15,13 @@ class CourseViewSet(ModelViewSet):
         serializer.save()
 
     def get_permissions(self):
-        if self.action in ['create', 'destroy']:
+        self.permission_classes = []
+        if self.action == 'create':
             self.permission_classes = [~IsModerator]
-        elif self.action in ['update', 'retrieve']:
-                self.permission_classes = [IsModerator]
-        return super().get_permissions()
+        elif self.action in ['retrieve', 'update', 'destroy']:
+            self.permission_classes = [IsModerator | IsOwner]
+
+        return [permission() for permission in self.permission_classes]
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
