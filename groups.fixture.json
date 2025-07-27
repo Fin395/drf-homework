@@ -11,6 +11,14 @@
     "model": "auth.group",
     "pk": 2,
     "fields": {
+      "name": "Пользователь",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
       "name": "Преподаватель",
       "permissions": []
     }
