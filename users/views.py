@@ -32,3 +32,12 @@ class PaymentsListAPIView(generics.ListAPIView):
 class UserRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
+
+
+class UserListAPIView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+
+class UserDestroyAPIView(generics.DestroyAPIView):
+    queryset = User.objects.all()
