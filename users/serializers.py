@@ -18,4 +18,8 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "email",
             "payments_history",
+            "password",
         ]
+        extra_kwargs = {
+            'password': {'write_only': True, 'required': True}
+        }
