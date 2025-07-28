@@ -8,7 +8,11 @@ from users.permissions import IsModerator, IsOwner
 
 class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
-    queryset = Course.objects.all()
+
+    def get_queryset(self):
+        if self.request.user.groups.filter(name='Модератор').exists():
+            return Course.objects.all()
+        return Course.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
         serializer.validated_data['owner'] = self.request.user
@@ -37,8 +41,11 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
 
+    def get_queryset(self):
+        if self.request.user.groups.filter(name='Модератор').exists():
+            return Lesson.objects.all()
+        return Lesson.objects.filter(owner=self.request.user)
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = LessonSerializer
