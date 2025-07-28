@@ -14,12 +14,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = [
-            "id",
-            "email",
-            "payments_history",
-            "password",
-        ]
+        fields = '__all__'
         extra_kwargs = {
             'password': {'write_only': True, 'required': True}
         }
+
+
+class UserReducedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'city', 'is_staff']

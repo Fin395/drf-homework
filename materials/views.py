@@ -47,6 +47,7 @@ class LessonListAPIView(generics.ListAPIView):
             return Lesson.objects.all()
         return Lesson.objects.filter(owner=self.request.user)
 
+
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
