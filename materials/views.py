@@ -8,7 +8,11 @@ from users.permissions import IsModerator, IsOwner
 
 class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
-    queryset = Course.objects.all()
+
+    def get_queryset(self):
+        if self.request.user.groups.filter(name='Модератор').exists():
+            return Course.objects.all()
+        return Course.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
         serializer.validated_data['owner'] = self.request.user
@@ -17,11 +21,11 @@ class CourseViewSet(ModelViewSet):
     def get_permissions(self):
         self.permission_classes = []
         if self.action == 'create':
-            self.permission_classes = [~IsModerator]
-        elif self.action in ['retrieve', 'update']:
-            self.permission_classes = [IsModerator | IsOwner]
+            self.permission_classes = [IsAuthenticated, ~IsModerator]
+        elif self.action in ['retrieve', 'update', 'partial_update']:
+            self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
         elif self.action in ['destroy']:
-            self.permission_classes = [~IsModerator | IsOwner]
+            self.permission_classes = [IsAuthenticated, IsOwner]
 
         return [permission() for permission in self.permission_classes]
 
@@ -37,7 +41,11 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
+
+    def get_queryset(self):
+        if self.request.user.groups.filter(name='Модератор').exists():
+            return Lesson.objects.all()
+        return Lesson.objects.filter(owner=self.request.user)
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
@@ -54,4 +62,4 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, ~IsModerator | IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
