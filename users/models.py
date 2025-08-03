@@ -58,6 +58,7 @@ class Payments(models.Model):
         verbose_name="Пользователь",
         on_delete=models.CASCADE,
         related_name="payments",
+        null=True, blank=True,
     )
     payment_date = models.DateField(null=True, blank=True, verbose_name="Дата оплаты")
     paid_lesson = models.ForeignKey(
