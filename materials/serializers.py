@@ -8,7 +8,7 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = "__all__"
-        validators = [VideoReferenceValidator(field='video_reference')]
+        validators = [VideoReferenceValidator(field="video_reference")]
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -27,13 +27,12 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         course_subs = obj.subscriptions
-        current_user = self.context['request'].user
+        current_user = self.context["request"].user
 
         if course_subs.filter(user=current_user).exists():
             return "подписка оформлена"
         else:
             return "подписка не оформлена"
-
 
     class Meta:
         model = Course

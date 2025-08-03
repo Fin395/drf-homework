@@ -16,21 +16,21 @@ class CourseViewSet(ModelViewSet):
     pagination_class = CustomPagination
 
     def get_queryset(self):
-        if self.request.user.groups.filter(name='Модератор').exists():
+        if self.request.user.groups.filter(name="Модератор").exists():
             return Course.objects.all()
         return Course.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.validated_data['owner'] = self.request.user
+        serializer.validated_data["owner"] = self.request.user
         serializer.save()
 
     def get_permissions(self):
         self.permission_classes = []
-        if self.action == 'create':
+        if self.action == "create":
             self.permission_classes = [IsAuthenticated, ~IsModerator]
-        elif self.action in ['retrieve', 'update', 'partial_update']:
+        elif self.action in ["retrieve", "update", "partial_update"]:
             self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
-        elif self.action in ['destroy']:
+        elif self.action in ["destroy"]:
             self.permission_classes = [IsAuthenticated, IsOwner]
 
         return [permission() for permission in self.permission_classes]
@@ -41,7 +41,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
     permission_classes = [~IsModerator, IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.validated_data['owner'] = self.request.user
+        serializer.validated_data["owner"] = self.request.user
         serializer.save()
 
 
@@ -50,7 +50,7 @@ class LessonListAPIView(generics.ListAPIView):
     pagination_class = CustomPagination
 
     def get_queryset(self):
-        if self.request.user.groups.filter(name='Модератор').exists():
+        if self.request.user.groups.filter(name="Модератор").exists():
             return Lesson.objects.all()
         return Lesson.objects.filter(owner=self.request.user)
 
@@ -75,21 +75,21 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 class SubscriptionAPIView(APIView):
     @swagger_auto_schema(
         operation_description="This is a custom description for my endpoint",
-        responses={200: "Success"}
+        responses={200: "Success"},
     )
     def post(self, request):
         user = self.request.user
-        course_id = self.request.data.get('course')
+        course_id = self.request.data.get("course")
         course_item = get_object_or_404(Course, id=course_id)
 
         subs_item = Subscription.objects.filter(user=user, course=course_item)
 
         if subs_item.exists():
             subs_item.delete()
-            message = 'подписка удалена'
+            message = "подписка удалена"
         else:
             Subscription.objects.create(user=user, course=course_item)
-            message = 'подписка добавлена'
+            message = "подписка добавлена"
 
         return Response({"message": message})
 
@@ -97,7 +97,5 @@ class SubscriptionAPIView(APIView):
 class CurrentUserAPIView(APIView):
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context['request'] = self.request
+        context["request"] = self.request
         return context
-
-

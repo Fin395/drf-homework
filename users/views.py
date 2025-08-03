@@ -4,10 +4,19 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import AllowAny
 from users.models import Payments, User
 from users.permissions import IsProfileOwner
-from users.serializers import PaymentsSerializer, UserSerializer, UserReducedSerializer, PaymentSerializer
+from users.serializers import (
+    PaymentsSerializer,
+    UserSerializer,
+    UserReducedSerializer,
+    PaymentSerializer,
+)
 from rest_framework.permissions import IsAuthenticated
 
-from users.services import create_stripe_product, create_stripe_price, create_stripe_session
+from users.services import (
+    create_stripe_product,
+    create_stripe_price,
+    create_stripe_session,
+)
 
 
 class UserCreateAPIView(generics.CreateAPIView):
