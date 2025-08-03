@@ -4,7 +4,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import AllowAny
 from users.models import Payments, User
 from users.permissions import IsProfileOwner
-from users.serializers import PaymentsSerializer, UserSerializer, UserReducedSerializer
+from users.serializers import PaymentsSerializer, UserSerializer, UserReducedSerializer, PaymentSerializer
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -53,3 +53,10 @@ class UserListAPIView(generics.ListAPIView):
 class UserDestroyAPIView(generics.DestroyAPIView):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
+
+
+class PaymentCreateAPIView(generics.CreateAPIView):
+    serializer_class = PaymentSerializer
+
+    def perform_create(self, serializer):
+        pass
