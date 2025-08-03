@@ -24,3 +24,9 @@ class UserReducedSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'city', 'is_staff']
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payments
+        fields = '__all__'
