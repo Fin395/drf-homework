@@ -8,6 +8,7 @@ from materials.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModerator, IsOwner
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
 
 
 class CourseViewSet(ModelViewSet):
@@ -72,8 +73,11 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 
 
 class SubscriptionAPIView(APIView):
-
-    def post(self, *args, **kwargs):
+    @swagger_auto_schema(
+        operation_description="This is a custom description for my endpoint",
+        responses={200: "Success"}
+    )
+    def post(self, request):
         user = self.request.user
         course_id = self.request.data.get('course')
         course_item = get_object_or_404(Course, id=course_id)
