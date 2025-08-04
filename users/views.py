@@ -8,7 +8,6 @@ from users.serializers import (
     PaymentsSerializer,
     UserSerializer,
     UserReducedSerializer,
-    PaymentSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
 
@@ -67,7 +66,7 @@ class UserDestroyAPIView(generics.DestroyAPIView):
 
 
 class PaymentCreateAPIView(generics.CreateAPIView):
-    serializer_class = PaymentSerializer
+    serializer_class = PaymentsSerializer
 
     def perform_create(self, serializer):
         payment = serializer.save(

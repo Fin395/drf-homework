@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from materials.models import Course, Lesson, Subscription
 from materials.paginators import CustomPagination
-from materials.serializers import CourseSerializer, LessonSerializer
+from materials.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
 from users.permissions import IsModerator, IsOwner
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
@@ -74,10 +74,10 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 
 class SubscriptionAPIView(APIView):
     @swagger_auto_schema(
-        operation_description="This is a custom description for my endpoint",
+        request_body=SubscriptionSerializer,
         responses={200: "Success"},
     )
-    def post(self, request):
+    def post(self, *args, **kwargs):
         user = self.request.user
         course_id = self.request.data.get("course")
         course_item = get_object_or_404(Course, id=course_id)
