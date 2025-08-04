@@ -69,13 +69,16 @@ class PaymentCreateAPIView(generics.CreateAPIView):
     serializer_class = PaymentsSerializer
 
     def perform_create(self, serializer):
-        payment = serializer.save(
-            user=self.request.user,
-            amount=serializer.paid_course.price
-        )
-        product = create_stripe_product(payment.paid_course)
-        price = create_stripe_price(payment.amount, product)
-        session_id, payment_link = create_stripe_session(price)
-        payment.session_id = session_id
-        payment.link = payment_link
-        payment.save()
+        if serializer.validated_data['paid_course'].price != 0:
+            payment = serializer.save(
+                user=self.request.user,
+                amount=serializer.validated_data['paid_course'].price
+            )
+            product = create_stripe_product(payment.paid_course)
+            price = create_stripe_price(payment.amount, product)
+            session_id, payment_link = create_stripe_session(price)
+            payment.session_id = session_id
+            payment.link = payment_link
+            payment.save()
+        # else:
+        #     return Response('укажите стоимость курса')
