@@ -25,6 +25,13 @@ class Course(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True
     )
+    price = models.PositiveIntegerField(
+        verbose_name="Стоимость курса",
+        help_text="Укажите стоимость курса",
+        default=0,
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         verbose_name = "Курс"
@@ -72,6 +79,13 @@ class Lesson(models.Model):
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True
+    )
+    price = models.PositiveIntegerField(
+        verbose_name="Стоимость урока",
+        help_text="Укажите стоимость урока",
+        default=0,
+        blank=True,
+        null=True,
     )
 
     class Meta:
