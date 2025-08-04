@@ -15,8 +15,13 @@ from users.services import (
     create_stripe_product,
     create_stripe_price,
     create_stripe_session,
+    get_status,
 )
 from rest_framework.serializers import ValidationError
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from drf_yasg.utils import swagger_auto_schema
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -70,13 +75,13 @@ class PaymentCreateAPIView(generics.CreateAPIView):
     serializer_class = PaymentsSerializer
 
     def perform_create(self, serializer):
-        amount = serializer.validated_data['paid_course'].price
+        amount = serializer.validated_data["paid_course"].price
         if not amount:
-            raise ValidationError({'price': 'Это поле не может быть пустым'})
+            raise ValidationError({"price": "Это поле не может быть пустым"})
         else:
             payment = serializer.save(
                 user=self.request.user,
-                amount=serializer.validated_data['paid_course'].price
+                amount=serializer.validated_data["paid_course"].price,
             )
             product = create_stripe_product(payment.paid_course)
             price = create_stripe_price(payment.amount, product)
@@ -85,3 +90,13 @@ class PaymentCreateAPIView(generics.CreateAPIView):
             payment.link = payment_link
             payment.save()
 
+
+class PaymentStatusAPIView(APIView):
+    @swagger_auto_schema(
+        request_body=PaymentsSerializer,
+        responses={200: "Success"},
+    )
+    def get(self, *args, **kwargs):
+        session_id = self.request.data.get("session_id")
+        payment_status = get_status(session_id)
+        return Response({"статус платежа": payment_status})

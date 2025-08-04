@@ -68,7 +68,7 @@ class Payments(models.Model):
         verbose_name="Отдельно оплаченный урок",
         related_name="payments",
         null=True,
-        blank=True
+        blank=True,
     )
     paid_course = models.ForeignKey(
         Course,
@@ -76,7 +76,9 @@ class Payments(models.Model):
         verbose_name="Оплаченный курс",
         related_name="payments",
     )
-    amount = models.PositiveIntegerField(verbose_name="Сумма оплаты", blank=True, null=True)
+    amount = models.PositiveIntegerField(
+        verbose_name="Сумма оплаты", blank=True, null=True
+    )
     paying_method = models.CharField(
         max_length=50,
         choices=WAY_TO_PAY_CHOICES,

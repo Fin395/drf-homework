@@ -9,6 +9,7 @@ from users.views import (
     UserListAPIView,
     UserDestroyAPIView,
     PaymentCreateAPIView,
+    PaymentStatusAPIView,
 )
 from rest_framework.permissions import AllowAny
 
@@ -33,4 +34,5 @@ urlpatterns = [
     path("users/", UserListAPIView.as_view(), name="user-list"),
     path("user/delete/<int:pk>/", UserDestroyAPIView.as_view(), name="user-delete"),
     path("payment/", PaymentCreateAPIView.as_view(), name="payment-create"),
+    path("payment/status/", PaymentStatusAPIView.as_view(), name="payment-status-get"),
 ]
