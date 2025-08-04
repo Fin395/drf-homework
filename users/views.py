@@ -1,3 +1,4 @@
+import stripe
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.filters import OrderingFilter
@@ -17,8 +18,6 @@ from users.services import (
     create_stripe_session,
     get_status,
 )
-from rest_framework.serializers import ValidationError
-from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from drf_yasg.utils import swagger_auto_schema
@@ -75,7 +74,6 @@ class PaymentCreateAPIView(generics.CreateAPIView):
     serializer_class = PaymentsSerializer
 
     def perform_create(self, serializer):
-        amount = serializer.validated_data["paid_course"].price
         payment = serializer.save(
             user=self.request.user,
             amount=serializer.validated_data["paid_course"].price,
@@ -95,5 +93,8 @@ class PaymentStatusAPIView(APIView):
     )
     def get(self, *args, **kwargs):
         session_id = self.request.data.get("session_id")
-        payment_status = get_status(session_id)
-        return Response({"статус платежа": payment_status})
+        try:
+            payment_status = get_status(session_id)
+            return Response({"статус платежа": payment_status})
+        except stripe.error.CardError as e:
+            return Response({"error": str(e)})

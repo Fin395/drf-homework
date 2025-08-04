@@ -6,8 +6,4 @@ from .models import Course
 
 @admin.register(Course)
 class CourseUserAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "title",
-        "price"
-    )
+    list_display = ("id", "title", "price")

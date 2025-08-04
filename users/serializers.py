@@ -1,3 +1,6 @@
+import stripe
+from rest_framework.response import Response
+
 from rest_framework import serializers
 
 from users.models import Payments, User
@@ -5,10 +8,13 @@ from users.services import get_status
 
 
 class PaymentsSerializer(serializers.ModelSerializer):
-    status = serializers.SerializerMethodField
+    status = serializers.SerializerMethodField()
 
     def get_status(self, obj):
-        return get_status(obj.session_id)
+        try:
+            return get_status(obj.session_id)
+        except stripe.error.CardError as e:
+            return Response({"error": str(e)})
 
     class Meta:
         model = Payments
