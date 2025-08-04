@@ -16,6 +16,7 @@ from users.services import (
     create_stripe_price,
     create_stripe_session,
 )
+from rest_framework.serializers import ValidationError
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -69,7 +70,10 @@ class PaymentCreateAPIView(generics.CreateAPIView):
     serializer_class = PaymentsSerializer
 
     def perform_create(self, serializer):
-        if serializer.validated_data['paid_course'].price != 0:
+        amount = serializer.validated_data['paid_course'].price
+        if not amount:
+            raise ValidationError({'price': 'Это поле не может быть пустым'})
+        else:
             payment = serializer.save(
                 user=self.request.user,
                 amount=serializer.validated_data['paid_course'].price
@@ -80,5 +84,4 @@ class PaymentCreateAPIView(generics.CreateAPIView):
             payment.session_id = session_id
             payment.link = payment_link
             payment.save()
-        # else:
-        #     return Response('укажите стоимость курса')
+
