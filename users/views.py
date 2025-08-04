@@ -76,19 +76,16 @@ class PaymentCreateAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         amount = serializer.validated_data["paid_course"].price
-        if not amount:
-            raise ValidationError({"price": "Это поле не может быть пустым"})
-        else:
-            payment = serializer.save(
-                user=self.request.user,
-                amount=serializer.validated_data["paid_course"].price,
-            )
-            product = create_stripe_product(payment.paid_course)
-            price = create_stripe_price(payment.amount, product)
-            session_id, payment_link = create_stripe_session(price)
-            payment.session_id = session_id
-            payment.link = payment_link
-            payment.save()
+        payment = serializer.save(
+            user=self.request.user,
+            amount=serializer.validated_data["paid_course"].price,
+        )
+        product = create_stripe_product(payment.paid_course)
+        price = create_stripe_price(payment.amount, product)
+        session_id, payment_link = create_stripe_session(price)
+        payment.session_id = session_id
+        payment.link = payment_link
+        payment.save()
 
 
 class PaymentStatusAPIView(APIView):

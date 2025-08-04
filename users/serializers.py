@@ -1,9 +1,15 @@
 from rest_framework import serializers
 
 from users.models import Payments, User
+from users.services import get_status
 
 
 class PaymentsSerializer(serializers.ModelSerializer):
+    status = serializers.SerializerMethodField
+
+    def get_status(self, obj):
+        return get_status(obj.session_id)
+
     class Meta:
         model = Payments
         fields = "__all__"

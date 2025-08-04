@@ -1,3 +1,13 @@
 from django.contrib import admin
 
-# Register your models here.
+from materials.models import Subscription
+from .models import Course
+
+
+@admin.register(Course)
+class CourseUserAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "title",
+        "price"
+    )
