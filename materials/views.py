@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework import generics
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
@@ -34,10 +35,13 @@ class CourseViewSet(ModelViewSet):
 
         return [permission() for permission in self.permission_classes]
 
-    # def update(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     insta
-
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response({'message': 'курс обновлен'})
 
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
