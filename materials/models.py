@@ -23,6 +23,7 @@ class Course(models.Model):
         help_text="Добавьте описание курса",
     )
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     class Meta:
         verbose_name = "Курс"

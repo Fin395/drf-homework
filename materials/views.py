@@ -34,6 +34,10 @@ class CourseViewSet(ModelViewSet):
 
         return [permission() for permission in self.permission_classes]
 
+    # def update(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     insta
+
 
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
