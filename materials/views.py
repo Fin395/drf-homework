@@ -56,7 +56,9 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.validated_data['owner'] = self.request.user
-        serializer.save()
+        lesson = serializer.save()
+        course = lesson.course
+        course.save()
 
 
 class LessonListAPIView(generics.ListAPIView):
@@ -80,11 +82,19 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModerator | IsOwner]
 
+    def perform_update(self, serializer):
+        lesson = serializer.save()
+        course = lesson.course
+        course.save()
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
 
+    def perform_destroy(self, instance):
+        course = instance.course
+        instance.delete()
+        course.save()
 
 class SubscriptionAPIView(APIView):
 
