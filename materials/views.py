@@ -9,6 +9,7 @@ from materials.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModerator, IsOwner
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+from materials.tasks import send_update_mail
 
 
 class CourseViewSet(ModelViewSet):
@@ -24,6 +25,11 @@ class CourseViewSet(ModelViewSet):
         serializer.validated_data['owner'] = self.request.user
         serializer.save()
 
+    def partial_update(self, request, *args, **kwargs):
+        send_update_mail.delay()
+        return super().partial_update(request, *args, **kwargs)
+
+
     def get_permissions(self):
         self.permission_classes = []
         if self.action == 'create':
@@ -35,20 +41,6 @@ class CourseViewSet(ModelViewSet):
 
         return [permission() for permission in self.permission_classes]
 
-    # def get_object(self):
-    #     new_instance = get_object_or_404(Course, pk=kwargs['pk'])
-    #     new_lessons = new_instance.lessons.all()
-    #     new_lessons_count = new_lessons.count()
-    #
-    #     old_lessons = get_object_or_404(Course.objects.prefetch_related('lessons'), pk=kwargs['pk']).lessons.all()
-    #     old_lessons_count = old_lessons.count()
-    #
-    #     if new_lessons_count != old_lessons_count:
-    #         get_object_or_404(Course, pk=kwargs['pk']).updated_at = datetime.now()
-    #
-    #     new_instance.save()
-    #     serializer = self.get_serializer(new_instance)
-    #     return Response(data=serializer.data)
 
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
@@ -59,6 +51,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
         lesson = serializer.save()
         course = lesson.course
         course.save()
+        send_update_mail.delay()
 
 
 class LessonListAPIView(generics.ListAPIView):
@@ -86,6 +79,7 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
         lesson = serializer.save()
         course = lesson.course
         course.save()
+        send_update_mail.delay()
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
@@ -95,6 +89,7 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
         course = instance.course
         instance.delete()
         course.save()
+        send_update_mail.delay()
 
 class SubscriptionAPIView(APIView):
 
@@ -120,16 +115,3 @@ class SubscriptionAPIView(APIView):
 #         context = super().get_serializer_context()
 #         context['request'] = self.request
 #         return context
-
-
-
-    # def update(self, request, *args, **kwargs):
-    #     partial = kwargs.pop('partial', True)
-    #     instance = self.get_object()
-    #     instance.updated_at = datetime.now()
-    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_update(serializer)
-    #     return Response(data=serializer.data)
-
-
