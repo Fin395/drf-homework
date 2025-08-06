@@ -35,13 +35,19 @@ class CourseViewSet(ModelViewSet):
 
         return [permission() for permission in self.permission_classes]
 
-    # def update(self, request, *args, **kwargs):
-    #     partial = kwargs.pop('partial', True)
-    #     instance = self.get_object()
-    #     instance.updated_at = datetime.now()
-    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_update(serializer)
+    # def get_object(self):
+    #     new_instance = get_object_or_404(Course, pk=kwargs['pk'])
+    #     new_lessons = new_instance.lessons.all()
+    #     new_lessons_count = new_lessons.count()
+    #
+    #     old_lessons = get_object_or_404(Course.objects.prefetch_related('lessons'), pk=kwargs['pk']).lessons.all()
+    #     old_lessons_count = old_lessons.count()
+    #
+    #     if new_lessons_count != old_lessons_count:
+    #         get_object_or_404(Course, pk=kwargs['pk']).updated_at = datetime.now()
+    #
+    #     new_instance.save()
+    #     serializer = self.get_serializer(new_instance)
     #     return Response(data=serializer.data)
 
 class LessonCreateAPIView(generics.CreateAPIView):
@@ -104,5 +110,16 @@ class SubscriptionAPIView(APIView):
 #         context = super().get_serializer_context()
 #         context['request'] = self.request
 #         return context
+
+
+
+    # def update(self, request, *args, **kwargs):
+    #     partial = kwargs.pop('partial', True)
+    #     instance = self.get_object()
+    #     instance.updated_at = datetime.now()
+    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_update(serializer)
+    #     return Response(data=serializer.data)
 
 
