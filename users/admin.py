@@ -6,7 +6,7 @@ from .models import Payments, User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("id", "email")
+    list_display = ("id", "email", "last_login")
     exclude = ["password"]
 
 
