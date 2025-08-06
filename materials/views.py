@@ -1,4 +1,3 @@
-from datetime import datetime
 from rest_framework import generics
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
@@ -26,9 +25,8 @@ class CourseViewSet(ModelViewSet):
         serializer.save()
 
     def partial_update(self, request, *args, **kwargs):
-        send_update_mail.delay()
+        send_update_mail.delay(kwargs.get('pk'))
         return super().partial_update(request, *args, **kwargs)
-
 
     def get_permissions(self):
         self.permission_classes = []
@@ -51,7 +49,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
         lesson = serializer.save()
         course = lesson.course
         course.save()
-        send_update_mail.delay()
+        send_update_mail.delay(course.id)
 
 
 class LessonListAPIView(generics.ListAPIView):
@@ -79,7 +77,8 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
         lesson = serializer.save()
         course = lesson.course
         course.save()
-        send_update_mail.delay()
+        send_update_mail.delay(course.id)
+
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
@@ -89,7 +88,7 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
         course = instance.course
         instance.delete()
         course.save()
-        send_update_mail.delay()
+        send_update_mail.delay(course.id)
 
 class SubscriptionAPIView(APIView):
 
