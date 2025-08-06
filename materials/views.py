@@ -16,25 +16,25 @@ class CourseViewSet(ModelViewSet):
     pagination_class = CustomPagination
 
     def get_queryset(self):
-        if self.request.user.groups.filter(name='Модератор').exists():
+        if self.request.user.groups.filter(name="Модератор").exists():
             return Course.objects.all()
         return Course.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.validated_data['owner'] = self.request.user
+        serializer.validated_data["owner"] = self.request.user
         serializer.save()
 
     def partial_update(self, request, *args, **kwargs):
-        send_update_mail.delay(kwargs.get('pk'))
+        send_update_mail.delay(kwargs.get("pk"))
         return super().partial_update(request, *args, **kwargs)
 
     def get_permissions(self):
         self.permission_classes = []
-        if self.action == 'create':
+        if self.action == "create":
             self.permission_classes = [IsAuthenticated, ~IsModerator]
-        elif self.action in ['retrieve', 'update', 'partial_update']:
+        elif self.action in ["retrieve", "update", "partial_update"]:
             self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
-        elif self.action in ['destroy']:
+        elif self.action in ["destroy"]:
             self.permission_classes = [IsAuthenticated, IsOwner]
 
         return [permission() for permission in self.permission_classes]
@@ -45,7 +45,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
     permission_classes = [~IsModerator, IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.validated_data['owner'] = self.request.user
+        serializer.validated_data["owner"] = self.request.user
         lesson = serializer.save()
         course = lesson.course
         course.save()
@@ -57,7 +57,7 @@ class LessonListAPIView(generics.ListAPIView):
     pagination_class = CustomPagination
 
     def get_queryset(self):
-        if self.request.user.groups.filter(name='Модератор').exists():
+        if self.request.user.groups.filter(name="Модератор").exists():
             return Lesson.objects.all()
         return Lesson.objects.filter(owner=self.request.user)
 
@@ -90,21 +90,22 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
         course.save()
         send_update_mail.delay(course.id)
 
+
 class SubscriptionAPIView(APIView):
 
     def post(self, *args, **kwargs):
         user = self.request.user
-        course_id = self.request.data.get('course')
+        course_id = self.request.data.get("course")
         course_item = get_object_or_404(Course, id=course_id)
 
         subs_item = Subscription.objects.filter(user=user, course=course_item)
 
         if subs_item.exists():
             subs_item.delete()
-            message = 'подписка удалена'
+            message = "подписка удалена"
         else:
             Subscription.objects.create(user=user, course=course_item)
-            message = 'подписка добавлена'
+            message = "подписка добавлена"
 
         return Response({"message": message})
 

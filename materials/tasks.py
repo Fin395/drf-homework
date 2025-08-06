@@ -13,8 +13,8 @@ def send_update_mail(course_id):
     for subscription in subscriptions:
         user_email = subscription.user.email
         send_mail(
-        subject=f'Обновление курса "{course}"',
-        message=f'Курс "{course}" обновлен!',
-        from_email=EMAIL_HOST_USER,
-        recipient_list=[user_email]
-    )
+            subject=f'Обновление курса "{course}"',
+            message=f'Курс "{course}" обновлен!',
+            from_email=EMAIL_HOST_USER,
+            recipient_list=[user_email],
+        )

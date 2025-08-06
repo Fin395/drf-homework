@@ -22,6 +22,7 @@ class PaymentsAdmin(admin.ModelAdmin):
         "paying_method",
     )
 
+
 @admin.register(Subscription)
 class UserAdmin(admin.ModelAdmin):
     list_display = ("user", "course")
