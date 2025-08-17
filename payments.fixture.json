@@ -1,0 +1,26 @@
+[
+  {
+    "model": "users.payments",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "payment_date": "2025-07-20",
+      "paid_lesson": null,
+      "paid_course": 2,
+      "amount": 170000,
+      "paying_method": "Перевод на счет"
+    }
+  },
+  {
+    "model": "users.payments",
+    "pk": 2,
+    "fields": {
+      "user": 1,
+      "payment_date": "2025-07-15",
+      "paid_lesson": 3,
+      "paid_course": null,
+      "amount": 1500,
+      "paying_method": "Наличные"
+    }
+  }
+]
