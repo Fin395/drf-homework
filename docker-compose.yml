@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    command: >
+      bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+      - static_volume:/code/static
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+      - redis
+      - celery
+    env_file:
+      - .env
+
+  redis:
+    image: "redis"
+    volumes:
+      - redis_data:/data
+
+  celery:
+    build: .
+    command: celery -A config worker -l info -P eventlet
+    volumes:
+      - .:/code
+      - celery_data:/data
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  beat:
+    build: .
+    command: celery -A config beat -l info -S django
+    volumes:
+      - .:/code
+      - celery_beat_data:/data
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - celery
+
+  db:
+    image: postgres:16.0
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+
+volumes:
+  postgres_data:
+  static_volume:
+  redis_data:
+  celery_data:
+  celery_beat_data:
