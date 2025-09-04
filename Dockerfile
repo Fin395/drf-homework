@@ -1,23 +1,19 @@
-FROM python:3.13-slim
+FROM python:3.13
 
-WORKDIR /materials
+WORKDIR /app
 
-RUN apt-get update && apt-get install -y gcc libpq-dev && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install -y gcc libpq-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Копируем файл зависимостей в контейнер
-COPY requirements.txt ./
-
-# Устанавливаем зависимости Python
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копируем исходный код приложения в контейнер
 COPY . .
 
-# Создаем директорию для медиафайлов
-RUN mkdir -p /materials/media
+RUN mkdir -p /app/staticfiles && chmod -R 755 /app/staticfiles
 
-# Пробрасываем порт, который будет использовать Django
 EXPOSE 8000
 
-# Команда для запуска приложения
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --timeout 120"]
