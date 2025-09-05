@@ -1,7 +1,7 @@
 from rest_framework.test import APITestCase
 from django.urls import reverse
 from rest_framework import status
-from materials.models import Course, Lesson #Subscription
+from materials.models import Course, Lesson, Subscription
 from users.models import User
 
 
@@ -70,30 +70,30 @@ class LessonTestCase(APITestCase):
 #         self.assertEqual(data, result)
 #
 #
-# class SubscriptionTestCase(APITestCase):
-#
-#     def setUp(self):
-#         self.user = User.objects.create(email="test@test.com")
-#         self.course = Course.objects.create(pk=8, title="test course", owner=self.user)
-#         # self.subs = Subscription.objects.create(user=self.user, course=self.course)
-#         self.client.force_authenticate(user=self.user)
-#
-#     def test_subs_create(self):
-#         url = reverse("materials:subs-create")
-#         data = {"user": self.user, "course": 8}
-#         response = self.client.post(url, data)
-#         print(response.json())
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response.json().get("message"), "подписка добавлена")
-#         response = self.client.post(url, data)
-#         print(response.json())
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response.json().get("message"), "подписка удалена")
-#
-#     def test_user_is_subscribed(self):
-#         url = reverse("materials:course-detail", args=(self.course.pk,))
-#         Subscription.objects.create(user=self.user, course=self.course)
-#         response = self.client.get(url)
-#         print(response.json())
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response.json().get("is_subscribed"), "подписка оформлена")
+class SubscriptionTestCase(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(email="test@test.com")
+        self.course = Course.objects.create(pk=8, title="test course", owner=self.user)
+        # self.subs = Subscription.objects.create(user=self.user, course=self.course)
+        self.client.force_authenticate(user=self.user)
+
+    def test_subs_create(self):
+        url = reverse("materials:subs-create")
+        data = {"user": self.user, "course": 8}
+        response = self.client.post(url, data)
+        print(response.json())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json().get("message"), "подписка добавлена")
+        response = self.client.post(url, data)
+        print(response.json())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json().get("message"), "подписка удалена")
+
+    def test_user_is_subscribed(self):
+        url = reverse("materials:course-detail", args=(self.course.pk,))
+        Subscription.objects.create(user=self.user, course=self.course)
+        response = self.client.get(url)
+        print(response.json())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json().get("is_subscribed"), "подписка оформлена")
