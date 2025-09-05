@@ -14,7 +14,7 @@ class VideoReferenceValidator:
             return
 
         matches = re.findall(pattern, tmp_val)
-        if matches and not "youtube.com" in matches:
+        if matches and "youtube.com" not in matches:
             raise ValidationError(
                 "Нельзя прикреплять ссылки на сторонние ресурсы, кроме youtube.com"
             )

@@ -24,5 +24,5 @@ class PaymentsAdmin(admin.ModelAdmin):
 
 
 @admin.register(Subscription)
-class UserAdmin(admin.ModelAdmin):
+class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ("user", "course")
