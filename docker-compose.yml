@@ -14,6 +14,7 @@ services:
       - ./.env
     environment:
       POSTGRES_HOST: db
+      SECRET_KEY: "django-insecure-$$0koa&$&-np^9=)tlx)h0_=knf_es+7)yhvui5$e7+rd$m3_&"
 
   nginx:
     build:
