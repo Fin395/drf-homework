@@ -27,7 +27,7 @@ services:
       - web
 
   db:
-    image: postgres:16
+    image: postgres:15.1-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
