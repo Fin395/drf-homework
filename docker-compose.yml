@@ -5,8 +5,8 @@ services:
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
-    expose:
-      - "8000"
+    ports:
+      - "8000:8000"
     depends_on:
       - db
       - redis
@@ -14,7 +14,7 @@ services:
       - ./.env
     environment:
       POSTGRES_HOST: db
-      SECRET_KEY: "django-insecure-$$0koa&$&-np^9=)tlx)h0_=knf_es+7)yhvui5$e7+rd$m3_&"
+      SECRET_KEY: ${POSTGRES_USER}
 
   nginx:
     build:
@@ -72,4 +72,3 @@ volumes:
   redis_data:
   celery_data:
   celery_beat_data:
-
